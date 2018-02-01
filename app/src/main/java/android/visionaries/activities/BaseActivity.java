@@ -2,6 +2,7 @@ package android.visionaries.activities;
 
 import android.app.FragmentManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.visionaries.R;
 import android.visionaries.fragments.NowPlayingCard;
@@ -13,11 +14,12 @@ import android.visionaries.fragments.QuickControlsFragment;
 
 public class BaseActivity extends AppCompatActivity {
 
-    public class initQuickControls extends AsyncTask<String, Void, String> {
+    public class initQuickControls extends AsyncTask<Bundle, Void, String> {
         @Override
-        protected String doInBackground(String... strings) {
+        protected String doInBackground(Bundle... bundles) {
             // TODO: Initialize QuickControlsFragment
             NowPlayingCard nowPlayingCard = new NowPlayingCard();
+            nowPlayingCard.setArguments(bundles[0]);
             android.support.v4.app.FragmentManager fragmentManager =
                     getSupportFragmentManager();
             fragmentManager.beginTransaction()

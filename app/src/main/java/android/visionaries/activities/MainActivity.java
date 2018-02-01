@@ -7,6 +7,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,88 +15,86 @@ import android.visionaries.Base2Activity;
 import android.visionaries.R;
 import android.visionaries.activities.AboutActivity;
 import android.visionaries.adapters.PopularTracksAdapter;
+import android.visionaries.api.Client;
+import android.visionaries.api.ServiceGenerator;
+import android.visionaries.api.models.PopularTracks;
 import android.visionaries.models.Album;
 import android.visionaries.models.Artist;
 import android.visionaries.models.PopularTrackList;
 import android.visionaries.models.Track;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class MainActivity extends Base2Activity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class MainActivity extends BaseActivity {
     Context context = this;
+    ArrayList<PopularTracks> popularTrackzs;
+    private static final String TAG = "MainActivity";
+    RecyclerView recyclerView;
+    ImageView destque;
+    ProgressBar progressBar;
+    TextView artistNameDestaque;
+    TextView trackTitleDestaque;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ImageView destque = findViewById(R.id.destaque_cover);
-        RecyclerView recyclerView = findViewById(R.id.artistList);
-        Artist artist = new Artist();
-        artist.setArtistCoverImage(R.drawable.big_shaq_track);
-        artist.setId(0);
-        artist.setDescription("Michael Dapaah (born January 1991[2]) is an English rapper, actor, and comedian of Ghanaian descent, best known for portraying the fictional road rapper Big Shaq (also known as Roadman Shaq). He is also known for his mockumentary SWIL (Somewhere in London), which focuses on four characters" +
-                " and their journey to success.");
-        artist.setMusicStyle("RNB");
-        artist.setName("Big Shaq");
-        artist.setVerified(false);
+        destque = findViewById(R.id.destaque_cover);
+        recyclerView = findViewById(R.id.artistList);
+        artistNameDestaque = findViewById(R.id.destaque_artista);
+        progressBar = findViewById(R.id.progressBar);
 
-        Album bigOne = new Album(0, "Big One", artist.getId());
-        Track track = new Track();
-        track.setaAlbum(bigOne);
-        track.setaArtist(artist);
-        track.setaName("Mans Bot Hot");
-        track.setTrackCover(R.drawable.big_shaq_track);
-
-        Artist artist1 = new Artist();
-        artist1.setName("Forca Suprema");
-        artist1.setId(0);
-        artist1.setDescription("FS");
-        artist1.setMusicStyle("RNB");
-        artist1.setVerified(true);
-
-        Track track2 = new Track();
-        track2.setaName("Urna");
-        track2.setaArtist(artist1);
-        track2.setaAlbum(new Album(1, "Forca", artist1.getId()));
-        track2.setTrackCover(R.drawable.nga);
-
-        Track track3 = new Track();
-        track3.setaName("Urna");
-        track3.setaArtist(artist1);
-        track3.setaAlbum(new Album(1, "Forca", artist1.getId()));
-        track3.setTrackCover(R.drawable.nga);
-
-        Track track4 = new Track();
-        track4.setaName("Urna");
-        track4.setaArtist(artist1);
-        track4.setaAlbum(new Album(1, "Forca", artist1.getId()));
-        track4.setTrackCover(R.drawable.nga);
-
-        Track track5 = new Track();
-        track5.setaName("Urna");
-        track5.setaArtist(artist1);
-        track5.setaAlbum(new Album(1, "Forca", artist1.getId()));
-        track5.setTrackCover(R.drawable.nga);
+        getTracks();
 
 
-        ArrayList<Track> tracks = new ArrayList<>();
-        tracks.add(track);
-        tracks.add(track2);
-        tracks.add(track3);
-        tracks.add(track4);
-        tracks.add(track5);
+    }
 
+    private void getTracks() {
+        Client.PopularTracks client = ServiceGenerator.createService(Client.PopularTracks.class);
+        client.getPopularTracks().enqueue(new Callback<ArrayList<PopularTracks>>() {
+            @Override
+            public void onResponse(Call<ArrayList<PopularTracks>> call, Response<ArrayList<PopularTracks>> response) {
+                if (response.code() == 200) {
+                    popularTrackzs = response.body();
+                    Bundle songInfo = new Bundle();
+                    songInfo.putParcelableArrayList("popular", popularTrackzs);
+                    updateViews();
+                    progressBar.setVisibility(View.GONE);
+                    new initQuickControls().doInBackground(songInfo);
 
-        PopularTrackList popularTrackList = new PopularTrackList();
-        popularTrackList.setPopularTracks(tracks);
+                } else {
+                    Log.d(TAG, "onResponse: numeros de musicas => " + popularTrackzs.size());
+                    progressBar.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<PopularTracks>> call, Throwable t) {
+                Log.d(TAG, "onFailure: ");
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
+    private void updateViews() {
+        artistNameDestaque.setText(popularTrackzs.get(0).getArtist().get(0).getName());
+        trackTitleDestaque.setText(popularTrackzs.get(0).getTrackTitle());
+        Picasso.with(this).load(popularTrackzs.get(0).getTrackCoverArt()).into(destque);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        PopularTracksAdapter tracksAdapter = new PopularTracksAdapter(this, popularTrackList);
+        PopularTracksAdapter tracksAdapter = new PopularTracksAdapter(this, popularTrackzs);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(tracksAdapter);
-        new initNowPlayingControls().execute("");
-
     }
 
 
@@ -121,4 +120,6 @@ public class MainActivity extends Base2Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

@@ -9,11 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.visionaries.R;
 import android.visionaries.activities.ArtistActivity;
+import android.visionaries.api.models.PopularTracks;
 import android.visionaries.models.Artist;
 import android.visionaries.models.PopularTrackList;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 /**
  * Created by AirtonLucas on 19/12/2017.
@@ -21,9 +26,9 @@ import android.widget.Toast;
 public class PopularTracksAdapter extends RecyclerView.Adapter<PopularTracksAdapter.Viewholder> {
 
     private static Context mContext;
-    private PopularTrackList mPopularTrackList;
+    private ArrayList<PopularTracks> mPopularTrackList;
 
-    public PopularTracksAdapter(Context context, PopularTrackList popularTrackList) {
+    public PopularTracksAdapter(Context context, ArrayList<PopularTracks> popularTrackList) {
         mContext = context;
         mPopularTrackList = popularTrackList;
     }
@@ -46,20 +51,19 @@ public class PopularTracksAdapter extends RecyclerView.Adapter<PopularTracksAdap
     @Override
     public Viewholder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(mContext).inflate(R.layout.artist_card, parent, false);
-
         return new Viewholder(v);
     }
 
     @Override
     public void onBindViewHolder(Viewholder holder, int position) {
-        holder.trackTitle.setText(mPopularTrackList.getPopularTracks().get(position).getaName());
-        holder.artistName.setText(mPopularTrackList.getPopularTracks().get(position).getaArtist().getName());
-        holder.trackCover.setImageResource(mPopularTrackList.getPopularTracks().get(position).getTrackCover());
+        holder.trackTitle.setText(mPopularTrackList.get(position).getTrackTitle());
+        holder.artistName.setText(mPopularTrackList.get(position).getArtist().get(0).getName());
+        Picasso.with(mContext).load(mPopularTrackList.get(position).getTrackCoverArt()).resize(512, 512).into(holder.trackCover);
         Bundle musicData = new Bundle();
-        musicData.putString(PopularTracksConstants.ARTIST_TITLE, mPopularTrackList.getPopularTracks().get(position).getaArtist().getName());
-        musicData.putString(PopularTracksConstants.TRACK_TITLE, mPopularTrackList.getPopularTracks().get(position).getaName());
-        musicData.putInt(PopularTracksConstants.TRACK_COVER, mPopularTrackList.getPopularTracks().get(position).getTrackCover());
-        musicData.putString(PopularTracksConstants.ARTIST_DESCRIPTION, mPopularTrackList.getPopularTracks().get(position).getaArtist().getDescription());
+        musicData.putString(PopularTracksConstants.ARTIST_TITLE, mPopularTrackList.get(position).getArtist().get(0).getName());
+        musicData.putString(PopularTracksConstants.TRACK_TITLE, mPopularTrackList.get(position).getTrackTitle());
+        musicData.putString(PopularTracksConstants.TRACK_COVER, mPopularTrackList.get(position).getTrackCoverArt());
+        musicData.putString(PopularTracksConstants.ARTIST_DESCRIPTION, mPopularTrackList.get(position).getArtist().get(0).getDescription());
 
         final Intent intent = new Intent(mContext, ArtistActivity.class);
         intent.putExtras(musicData);
@@ -74,7 +78,7 @@ public class PopularTracksAdapter extends RecyclerView.Adapter<PopularTracksAdap
 
     @Override
     public int getItemCount() {
-        return mPopularTrackList.getPopularTracks().size();
+        return mPopularTrackList.size();
     }
 
 }
