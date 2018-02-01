@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.visionaries.Base2Activity;
 import android.visionaries.R;
 import android.visionaries.activities.AboutActivity;
 import android.visionaries.adapters.PopularTracksAdapter;
@@ -54,6 +53,7 @@ public class MainActivity extends BaseActivity {
         artistNameDestaque = findViewById(R.id.destaque_artista);
         progressBar = findViewById(R.id.progressBar);
 
+
         getTracks();
 
 
@@ -89,7 +89,6 @@ public class MainActivity extends BaseActivity {
 
     private void updateViews() {
         artistNameDestaque.setText(popularTrackzs.get(0).getArtist().get(0).getName());
-        trackTitleDestaque.setText(popularTrackzs.get(0).getTrackTitle());
         Picasso.with(this).load(popularTrackzs.get(0).getTrackCoverArt()).into(destque);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         PopularTracksAdapter tracksAdapter = new PopularTracksAdapter(this, popularTrackzs);

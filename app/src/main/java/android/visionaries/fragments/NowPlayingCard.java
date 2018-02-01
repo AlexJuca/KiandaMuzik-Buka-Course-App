@@ -25,7 +25,7 @@ public class NowPlayingCard extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.bottom_now_playing_card, container, false);
+        View v = inflater.inflate(R.layout.bottom_now_controls, container, false);
         albumArt = v.findViewById(R.id.controls_album_art);
         progressBar = v.findViewById(R.id.controls_progress);
         playPauseButton = v.findViewById(R.id.controls_play_pause);

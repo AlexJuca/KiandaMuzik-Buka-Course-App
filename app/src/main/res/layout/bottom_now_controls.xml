@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:fontFamily="@font/monofett"
+            android:fontFamily="@font/montserrat_bold"
             android:text="Man's Not Hot"
             android:textSize="15sp"
             app:layout_constraintBottom_toTopOf="@+id/controls_artist_title"

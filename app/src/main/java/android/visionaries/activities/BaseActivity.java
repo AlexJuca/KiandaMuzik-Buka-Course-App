@@ -1,12 +1,10 @@
 package android.visionaries.activities;
 
-import android.app.FragmentManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.visionaries.R;
 import android.visionaries.fragments.NowPlayingCard;
-import android.visionaries.fragments.QuickControlsFragment;
 
 /**
  * Created by AirtonLucas on 19/12/2017.

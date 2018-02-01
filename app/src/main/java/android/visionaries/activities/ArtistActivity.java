@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class ArtistActivity extends RootActivity {
+public class ArtistActivity extends BaseActivity {
     ImageView capaDoArtist;
     TextView nomeArtista;
     TextView artistDescription;
@@ -45,7 +45,7 @@ public class ArtistActivity extends RootActivity {
 
         ArtistTrackList trackList = getArtistTrackList();
         inicializarRecycleView(trackList);
-        new initializeControls().execute("");
+
     }
 
     private void inicializarRecycleView(ArtistTrackList trackList) {
